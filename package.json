@@ -1,8 +1,9 @@
 {
   "name": "sakura",
   "version": "1.0.0",
-  "description": "Vanilla JS version of jQuery-Sakura: Make it rain - sakura petals.",
+  "description": "Vanilla JS version of jQuery-Sakura: Make it rain sakura petals.",
   "main": "dist/sakura.js",
+  "homepage": "https://github.com/jhammann/sakura",
   "author": "Jeroen Hammann",
   "license": "MIT",
   "devDependencies": {

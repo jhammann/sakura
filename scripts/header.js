@@ -10,6 +10,7 @@ module.exports = `${`
 /*!
  * Sakura.js ${pkg.version}
  * ${pkg.description}
+ * ${pkg.homepage}
  *
  * Copyright 2019-${date.year} ${pkg.author}
  *

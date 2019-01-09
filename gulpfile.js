@@ -67,5 +67,6 @@ function watchFiles() {
 const watch = gulp.series(gulp.parallel(lint, js, css), watchFiles);
 const build = gulp.parallel(js, css);
 
+exports.lint = lint;
 exports.watch = watch;
 exports.default = build;
