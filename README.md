@@ -8,8 +8,20 @@ Sakura.js (like its original jQuery plugin) uses CSS3 animations and `requestAni
 ## Demo
 You can check a demo here: [jhammann.github.io/sakura/](https://jhammann.github.io/sakura/)
 
-## Setup
+## Install
+You can install Sakura.js with NPM:
 
+```bash
+$ npm install sakura-js
+```
+
+Or with Yarn if you prefer:
+
+```bash
+$ yarn add sakura-js
+```
+
+## Setup
 Include the Sakura.js files inside your page and initialize it within your javascript.
 Below code shows the petals in your body (see the [demo](https://jhammann.github.io/sakura/) for the results).
 
