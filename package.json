@@ -1,5 +1,5 @@
 {
-  "name": "sakura",
+  "name": "sakura-js",
   "version": "1.0.0",
   "description": "Vanilla JS version of jQuery-Sakura: Make it rain sakura petals.",
   "main": "dist/sakura.js",

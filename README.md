@@ -1,5 +1,5 @@
 # Sakura.js
-Sakura.js is an improved vanilla JS version of the [jQuery-Sakura](https://github.com/almightynay/jQuery-Sakura) plugin. It makes it rain petals on a (section) of your page. _Credits to the original creator of the jQuery plugin. I made this plugin because I wanted a tweaked vanilla JS version with NPM support._
+Sakura.js is an improved vanilla JS version of the [jQuery-Sakura](https://github.com/almightynay/jQuery-Sakura) plugin. It makes it rain petals on a (section) of your page. _Credits to the original creator of the jQuery plugin._ I made this plugin because I wanted a tweaked vanilla JS version with NPM support.
 
 Sakura.js (like its original jQuery plugin) uses CSS3 animations and `requestAnimationFrame` to add elements which look like blossom petals to the DOM. You can add it on any element like the body, a div etc. They will animate on your page influenced by wind and gravity. Of course this doesn't have to be limited to blossom petals. It can be regular leafs as well or something completely different.
 
