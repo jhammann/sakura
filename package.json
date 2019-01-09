@@ -1,0 +1,25 @@
+{
+  "name": "sakura",
+  "version": "1.0.0",
+  "description": "Vanilla JS version of jQuery-Sakura: Make it rain - sakura petals.",
+  "main": "dist/sakura.js",
+  "author": "Jeroen Hammann",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.3",
+    "eslint": "^5.12.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "gulp": "^4.0.0",
+    "gulp-autoprefixer": "^6.0.0",
+    "gulp-babel": "^8.0.0",
+    "gulp-clean-css": "^4.0.0",
+    "gulp-eslint": "^5.0.0",
+    "gulp-header": "^2.0.7",
+    "gulp-rename": "^1.4.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-uglify": "^3.0.1"
+  },
+  "dependencies": {}
+}
