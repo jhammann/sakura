@@ -12,9 +12,11 @@ const Sakura = function (selector, options) {
     maxSize: 14, // The maximum size of the petal.
     minSize: 10, // The minimum size of the petal.
     delay: 300, // Delay between petals.
-    gradientColorStart: 'rgba(255, 183, 197, 0.9)', // Gradient color start (rgba).
-    gradientColorEnd: 'rgba(255, 197, 208, 0.9)', // Gradient color end (rgba).
-    gradientColorDegree: 120, // Gradient degree angle.
+    colors: [{ // You can add multiple colors (chosen randomly) by adding elements to the array.
+      gradientColorStart: 'rgba(255, 183, 197, 0.9)', // Gradient color start (rgba).
+      gradientColorEnd: 'rgba(255, 197, 208, 0.9)', // Gradient color end (rgba).
+      gradientColorDegree: 120, // Gradient degree angle.
+    }],
   };
 
   // Merge defaults with user options.
@@ -119,7 +121,10 @@ const Sakura = function (selector, options) {
     const height = randomInt(this.settings.minSize, this.settings.maxSize);
     const width = height - Math.floor(randomInt(0, this.settings.minSize) / 3);
 
-    petal.style.background = `linear-gradient(${this.settings.gradientColorDegree}deg, ${this.settings.gradientColorStart}, ${this.settings.gradientColorEnd})`;
+    // Get a random color.
+    const color = randomArrayElem(this.settings.colors);
+
+    petal.style.background = `linear-gradient(${color.gradientColorDegree}deg, ${color.gradientColorStart}, ${color.gradientColorEnd})`;
     petal.style.webkitAnimation = animations;
     petal.style.animation = animations;
     petal.style.borderRadius = `${randomInt(this.settings.maxSize, (this.settings.maxSize + Math.floor(Math.random() * 10)))}px ${randomInt(1, Math.floor(width / 4))}px`;

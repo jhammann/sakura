@@ -1,5 +1,5 @@
 /*!
- * Sakura.js 1.0.2
+ * Sakura.js 1.1.0
  * Vanilla JS version of jQuery-Sakura: Make it rain sakura petals.
  * https://github.com/jhammann/sakura
  *
@@ -7,7 +7,7 @@
  *
  * Released under the MIT License
  *
- * Released on: January 9, 2019
+ * Released on: January 10, 2019
  */
 "use strict";
 
@@ -31,12 +31,15 @@ var Sakura = function Sakura(selector, options) {
     // The minimum size of the petal.
     delay: 300,
     // Delay between petals.
-    gradientColorStart: 'rgba(255, 183, 197, 0.9)',
-    // Gradient color start (rgba).
-    gradientColorEnd: 'rgba(255, 197, 208, 0.9)',
-    // Gradient color end (rgba).
-    gradientColorDegree: 120 // Gradient degree angle.
+    colors: [{
+      // You can add multiple colors (chosen randomly) by adding elements to the array.
+      gradientColorStart: 'rgba(255, 183, 197, 0.9)',
+      // Gradient color start (rgba).
+      gradientColorEnd: 'rgba(255, 197, 208, 0.9)',
+      // Gradient color end (rgba).
+      gradientColorDegree: 120 // Gradient degree angle.
 
+    }]
   }; // Merge defaults with user options.
 
   var extend = function extend(originalObj, newObj) {
@@ -108,8 +111,10 @@ var Sakura = function Sakura(selector, options) {
     var petal = document.createElement('div');
     petal.classList.add(_this.settings.className);
     var height = randomInt(_this.settings.minSize, _this.settings.maxSize);
-    var width = height - Math.floor(randomInt(0, _this.settings.minSize) / 3);
-    petal.style.background = "linear-gradient(".concat(_this.settings.gradientColorDegree, "deg, ").concat(_this.settings.gradientColorStart, ", ").concat(_this.settings.gradientColorEnd, ")");
+    var width = height - Math.floor(randomInt(0, _this.settings.minSize) / 3); // Get a random color.
+
+    var color = randomArrayElem(_this.settings.colors);
+    petal.style.background = "linear-gradient(".concat(color.gradientColorDegree, "deg, ").concat(color.gradientColorStart, ", ").concat(color.gradientColorEnd, ")");
     petal.style.webkitAnimation = animations;
     petal.style.animation = animations;
     petal.style.borderRadius = "".concat(randomInt(_this.settings.maxSize, _this.settings.maxSize + Math.floor(Math.random() * 10)), "px ").concat(randomInt(1, Math.floor(width / 4)), "px");

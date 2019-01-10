@@ -51,9 +51,28 @@ Below code shows the petals in your body (see the [demo](https://jhammann.github
 | `maxSize` | The maximum size of the petals. | Integer | 14 |
 | `minSize` | The minimum size of the petals. | Integer | 10 |
 | `delay` | The delay between petals (in ms). If you increase it, it will take longer for a new petal to drop and vice versa. | Integer | 300 |
-| `gradientColorStart` | The petals are made with a [linear-gradient](https://developer.mozilla.org/en-US/docs/Web/CSS/linear-gradient). This is the start color (in rgba). | String | 'rgba(255, 183, 197, 0.9)' |
-| `gradientColorEnd` | The linear-gradient end color (in rgba). | String | 'rgba(255, 197, 208, 0.9)' |
-| `gradientColorDegree` | The degree in which the linear-gradient tilts. | Integer | 120 |
+| `colors.gradientColorStart` | The petals are made with a [linear-gradient](https://developer.mozilla.org/en-US/docs/Web/CSS/linear-gradient). This is the start color (in rgba). | String | 'rgba(255, 183, 197, 0.9)' |
+| `colors.gradientColorEnd` | The linear-gradient end color (in rgba). | String | 'rgba(255, 197, 208, 0.9)' |
+| `colors.gradientColorDegree` | The degree in which the linear-gradient tilts. | Integer | 120 |
+
+##### Adding multiple colors
+You can add multiple colors like the example below. Colors are randomly picked.
+
+```js
+var sakura = new Sakura('body', {
+    colors: [{
+        gradientColorStart: 'rgba(127,2,25,1)',
+        gradientColorEnd: 'rgba(155,5,5,1)',
+        gradientColorDegree: 120,
+    },
+    {
+        gradientColorStart: 'rgba(255,219,43,1)',
+        gradientColorEnd: 'rgba(242,169,0,1)',
+        gradientColorDegree: 120,
+    }],
+});
+```
+
 
 ## Methods
 
