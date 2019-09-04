@@ -1,4 +1,4 @@
-const Sakura = function (selector, options) {
+const Sakura = function(selector, options) {
   if (typeof selector === 'undefined') {
     throw new Error('No selector present. Define an element.');
   }
@@ -12,16 +12,19 @@ const Sakura = function (selector, options) {
     maxSize: 14, // The maximum size of the petal.
     minSize: 10, // The minimum size of the petal.
     delay: 300, // Delay between petals.
-    colors: [{ // You can add multiple colors (chosen randomly) by adding elements to the array.
-      gradientColorStart: 'rgba(255, 183, 197, 0.9)', // Gradient color start (rgba).
-      gradientColorEnd: 'rgba(255, 197, 208, 0.9)', // Gradient color end (rgba).
-      gradientColorDegree: 120, // Gradient degree angle.
-    }],
+    colors: [
+      {
+        // You can add multiple colors (chosen randomly) by adding elements to the array.
+        gradientColorStart: 'rgba(255, 183, 197, 0.9)', // Gradient color start (rgba).
+        gradientColorEnd: 'rgba(255, 197, 208, 0.9)', // Gradient color end (rgba).
+        gradientColorDegree: 120, // Gradient degree angle.
+      },
+    ],
   };
 
   // Merge defaults with user options.
-  const extend = function (originalObj, newObj) {
-    Object.keys(originalObj).forEach((key) => {
+  const extend = function(originalObj, newObj) {
+    Object.keys(originalObj).forEach(key => {
       if (newObj && Object.prototype.hasOwnProperty.call(newObj, key)) {
         const origin = originalObj;
         origin[key] = newObj[key];
@@ -65,10 +68,11 @@ const Sakura = function (selector, options) {
     const rect = el.getBoundingClientRect();
 
     return (
-      rect.top >= 0
-        && rect.left >= 0
-        && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
-        && rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <=
+        (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
     );
   }
 
@@ -103,14 +107,17 @@ const Sakura = function (selector, options) {
     // Get one random animation of each type and randomize fall time of the petals
     const blowAnimation = randomArrayElem(animationNames.blowAnimations);
     const swayAnimation = randomArrayElem(animationNames.swayAnimations);
-    const fallTime = (
-      (document.documentElement.clientHeight * 0.007) + Math.round(Math.random() * 5)
-    ) * this.settings.fallSpeed;
+    const fallTime =
+      (document.documentElement.clientHeight * 0.007 +
+        Math.round(Math.random() * 5)) *
+      this.settings.fallSpeed;
 
     // Create animations
     const animationsArr = [
       `fall ${fallTime}s linear 0s 1`,
-      `${blowAnimation} ${(((fallTime > 30 ? fallTime : 30) - 20) + randomInt(0, 20))}s linear 0s infinite`,
+      `${blowAnimation} ${(fallTime > 30 ? fallTime : 30) -
+        20 +
+        randomInt(0, 20)}s linear 0s infinite`,
       `${swayAnimation} ${randomInt(2, 4)}s linear 0s infinite`,
     ];
     const animations = animationsArr.join(', ');
@@ -127,10 +134,14 @@ const Sakura = function (selector, options) {
     petal.style.background = `linear-gradient(${color.gradientColorDegree}deg, ${color.gradientColorStart}, ${color.gradientColorEnd})`;
     petal.style.webkitAnimation = animations;
     petal.style.animation = animations;
-    petal.style.borderRadius = `${randomInt(this.settings.maxSize, (this.settings.maxSize + Math.floor(Math.random() * 10)))}px ${randomInt(1, Math.floor(width / 4))}px`;
+    petal.style.borderRadius = `${randomInt(
+      this.settings.maxSize,
+      this.settings.maxSize + Math.floor(Math.random() * 10),
+    )}px ${randomInt(1, Math.floor(width / 4))}px`;
     petal.style.height = `${height}px`;
-    petal.style.left = `${(Math.random() * document.documentElement.clientWidth - 100)}px`;
-    petal.style.marginTop = `${(-(Math.floor(Math.random() * 20) + 15))}px`;
+    petal.style.left = `${Math.random() * document.documentElement.clientWidth -
+      100}px`;
+    petal.style.marginTop = `${-(Math.floor(Math.random() * 20) + 15)}px`;
     petal.style.width = `${width}px`;
 
     // Remove petals of which the animation ended.
@@ -151,19 +162,25 @@ const Sakura = function (selector, options) {
     this.el.appendChild(petal);
   };
 
-  this.el.setAttribute('data-sakura-anim-id', window.requestAnimationFrame(this.createPetal));
+  this.el.setAttribute(
+    'data-sakura-anim-id',
+    window.requestAnimationFrame(this.createPetal),
+  );
 };
 
-Sakura.prototype.start = function () {
+Sakura.prototype.start = function() {
   const animId = this.el.dataset.sakuraAnimId;
   if (!animId) {
-    this.el.setAttribute('data-sakura-anim-id', window.requestAnimationFrame(this.createPetal));
+    this.el.setAttribute(
+      'data-sakura-anim-id',
+      window.requestAnimationFrame(this.createPetal),
+    );
   } else {
     throw new Error('Sakura is already running.');
   }
 };
 
-Sakura.prototype.stop = function (graceful = false) {
+Sakura.prototype.stop = function(graceful = false) {
   const animId = this.el.dataset.sakuraAnimId;
   if (animId) {
     window.cancelAnimationFrame(animId);
@@ -179,6 +196,6 @@ Sakura.prototype.stop = function (graceful = false) {
       while (petals.length > 0) {
         petals[0].parentNode.removeChild(petals[0]);
       }
-    }, (this.settings.delay + 50));
+    }, this.settings.delay + 50);
   }
 };

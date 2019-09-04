@@ -3,7 +3,7 @@ Sakura.js is an improved vanilla JS version of the [jQuery-Sakura](https://githu
 
 Sakura.js (like its original jQuery plugin) uses CSS3 animations and `requestAnimationFrame` to add elements which look like blossom petals to the DOM. You can add it on any element like the body, a div etc. They will animate on your page influenced by wind and gravity. Of course this doesn't have to be limited to blossom petals. It can be regular leafs as well or something completely different.
 
-![](https://i.imgur.com/uybiYfI.gif)
+![](https://i.imgur.com/Qvmj4sM.gif)
 
 ## Demo
 You can check a demo here: [jhammann.github.io/sakura/](https://jhammann.github.io/sakura/)
@@ -44,32 +44,39 @@ Below code shows the petals in your body (see the [demo](https://jhammann.github
 
 ## Options
 
-| Name | Description | Type | Default |
-|------|-------------|------|---------|
-| `className` | Classname of the petals. This corresponds with the Sakura CSS. | String | 'sakura' |
-| `fallSpeed` | Speed factor in which the petal falls (the higher the number the slower it falls). | Integer | 1 |
-| `maxSize` | The maximum size of the petals. | Integer | 14 |
-| `minSize` | The minimum size of the petals. | Integer | 10 |
-| `delay` | The delay between petals (in ms). If you increase it, it will take longer for a new petal to drop and vice versa. | Integer | 300 |
-| `colors.gradientColorStart` | The petals are made with a [linear-gradient](https://developer.mozilla.org/en-US/docs/Web/CSS/linear-gradient). This is the start color (in rgba). | String | 'rgba(255, 183, 197, 0.9)' |
-| `colors.gradientColorEnd` | The linear-gradient end color (in rgba). | String | 'rgba(255, 197, 208, 0.9)' |
-| `colors.gradientColorDegree` | The degree in which the linear-gradient tilts. | Integer | 120 |
+| Name                         | Description                                                                                                                                        | Type    | Default                    |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | -------------------------- |
+| `className`                  | Classname of the petals. This corresponds with the Sakura CSS.                                                                                     | String  | 'sakura'                   |
+| `fallSpeed`                  | Speed factor in which the petal falls (the higher the number the slower it falls).                                                                 | Integer | 1                          |
+| `maxSize`                    | The maximum size of the petals.                                                                                                                    | Integer | 14                         |
+| `minSize`                    | The minimum size of the petals.                                                                                                                    | Integer | 10                         |
+| `delay`                      | The delay between petals (in ms). If you increase it, it will take longer for a new petal to drop and vice versa.                                  | Integer | 300                        |
+| `colors.gradientColorStart`  | The petals are made with a [linear-gradient](https://developer.mozilla.org/en-US/docs/Web/CSS/linear-gradient). This is the start color (in rgba). | String  | 'rgba(255, 183, 197, 0.9)' |
+| `colors.gradientColorEnd`    | The linear-gradient end color (in rgba).                                                                                                           | String  | 'rgba(255, 197, 208, 0.9)' |
+| `colors.gradientColorDegree` | The degree in which the linear-gradient tilts.                                                                                                     | Integer | 120                        |
 
 ##### Adding multiple colors
 You can add multiple colors like the example below. Colors are randomly picked.
 
 ```js
 var sakura = new Sakura('body', {
-    colors: [{
-        gradientColorStart: 'rgba(127,2,25,1)',
-        gradientColorEnd: 'rgba(155,5,5,1)',
-        gradientColorDegree: 120,
-    },
-    {
-        gradientColorStart: 'rgba(255,219,43,1)',
-        gradientColorEnd: 'rgba(242,169,0,1)',
-        gradientColorDegree: 120,
-    }],
+    colors: [
+        {
+            gradientColorStart: 'rgba(255, 183, 197, 0.9)',
+            gradientColorEnd: 'rgba(255, 197, 208, 0.9)',
+            gradientColorDegree: 120,
+        },
+        {
+            gradientColorStart: 'rgba(255,189,189)',
+            gradientColorEnd: 'rgba(227,170,181)',
+            gradientColorDegree: 120,
+        },
+        {
+            gradientColorStart: 'rgba(212,152,163)',
+            gradientColorEnd: 'rgba(242,185,196)',
+            gradientColorDegree: 120,
+        },
+    ],
 });
 ```
 
@@ -78,10 +85,10 @@ var sakura = new Sakura('body', {
 
 After you initialize Sakura you have its initialized instance in a variable (like the `sakura` variable in the example above) with helpful methods.
 
-| Name | Description |
-|------|-------------|
+| Name                     | Description                                                                                                                                                                                 |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `sakura.stop(graceful);` | Stops the petals from dropping and removes them from the DOM. Set `graceful` (_boolean_) to `true` to let the petals finish their animation instead of removing them from the DOM abruptly. |
-| `sakura.start();` | Start Sakura after stopping it. |
+| `sakura.start();`        | Start Sakura after stopping it.                                                                                                                                                             |
 
 ## Development
 

@@ -28,9 +28,11 @@ function js() {
     .pipe(header(license))
     .pipe(gulp.dest(paths.scripts.dest))
     .pipe(uglify())
-    .pipe(rename({
-      suffix: '.min',
-    }))
+    .pipe(
+      rename({
+        suffix: '.min',
+      }),
+    )
     .pipe(header(license))
     .pipe(gulp.dest(paths.scripts.dest));
 }
@@ -46,16 +48,19 @@ function css() {
   return gulp
     .src(paths.styles.src)
     .pipe(sass().on('error', sass.logError))
-    .pipe(autoprefixer({
-      browsers: ['last 2 versions'],
-      cascade: false,
-    }))
+    .pipe(
+      autoprefixer({
+        cascade: false,
+      }),
+    )
     .pipe(header(license))
     .pipe(gulp.dest(paths.styles.dest))
     .pipe(cleanCSS())
-    .pipe(rename({
-      suffix: '.min',
-    }))
+    .pipe(
+      rename({
+        suffix: '.min',
+      }),
+    )
     .pipe(gulp.dest(paths.styles.dest));
 }
 
