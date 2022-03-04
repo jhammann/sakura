@@ -45,7 +45,7 @@ Below code shows the petals in your body (see the [demo](https://jhammann.github
 ## Options
 
 | Name                         | Description                                                                                                                                        | Type    | Default                    |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | -------------------------- |
+| ---------------------------- |----------------------------------------------------------------------------------------------------------------------------------------------------| ------- | -------------------------- |
 | `className`                  | Classname of the petals. This corresponds with the Sakura CSS.                                                                                     | String  | 'sakura'                   |
 | `fallSpeed`                  | Speed factor in which the petal falls (the higher the number the slower it falls).                                                                 | Integer | 1                          |
 | `maxSize`                    | The maximum size of the petals.                                                                                                                    | Integer | 14                         |
@@ -54,6 +54,7 @@ Below code shows the petals in your body (see the [demo](https://jhammann.github
 | `colors.gradientColorStart`  | The petals are made with a [linear-gradient](https://developer.mozilla.org/en-US/docs/Web/CSS/linear-gradient). This is the start color (in rgba). | String  | 'rgba(255, 183, 197, 0.9)' |
 | `colors.gradientColorEnd`    | The linear-gradient end color (in rgba).                                                                                                           | String  | 'rgba(255, 197, 208, 0.9)' |
 | `colors.gradientColorDegree` | The degree in which the linear-gradient tilts.                                                                                                     | Integer | 120                        |
+| `lifeTime`                   | The life time of the petals (0 is infinity).                                                                                                       | Integer | 0                          |
 
 ##### Adding multiple colors
 You can add multiple colors like the example below. Colors are randomly picked.
