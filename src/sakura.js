@@ -20,6 +20,7 @@ const Sakura = function(selector, options) {
         gradientColorDegree: 120, // Gradient degree angle.
       },
     ],
+    lifeTime: 0, // Lifetime of the petal.
   };
 
   // Merge defaults with user options.
@@ -35,6 +36,29 @@ const Sakura = function(selector, options) {
   };
 
   this.settings = extend(defaults, options);
+
+  // Dictionary for remove the petals by timestamp + lifetime
+  this.petalsWeak = new Map();
+
+  // Every sec check petals for remove (by lifeTime)
+  setInterval(() => {
+    if (!this.settings.lifeTime)
+      return;
+
+    const keysForRemove = [];
+    const stamp = Date.now();
+
+    for (const [key, value] of this.petalsWeak) {
+      if (key + this.settings.lifeTime < stamp) {
+        keysForRemove.push(key);
+        value.remove();
+      }
+    }
+
+    for (const key of keysForRemove) {
+      this.petalsWeak.delete(key);
+    }
+  }, 1000);
 
   // Hide horizontal scrollbars on the target element.
   this.el.style.overflowX = 'hidden';
@@ -157,6 +181,9 @@ const Sakura = function(selector, options) {
         petal.remove();
       }
     });
+
+    // Added petals in weakMap by stamp
+    this.petalsWeak.set(Date.now(), petal);
 
     // Add the petal to the target element.
     this.el.appendChild(petal);
