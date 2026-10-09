@@ -54,7 +54,19 @@ Below code shows the petals in your body (see the [demo](https://jhammann.github
 | `colors.gradientColorStart`  | The petals are made with a [linear-gradient](https://developer.mozilla.org/en-US/docs/Web/CSS/linear-gradient). This is the start color (in rgba). | String  | 'rgba(255, 183, 197, 0.9)' |
 | `colors.gradientColorEnd`    | The linear-gradient end color (in rgba).                                                                                                           | String  | 'rgba(255, 197, 208, 0.9)' |
 | `colors.gradientColorDegree` | The degree in which the linear-gradient tilts.                                                                                                     | Integer | 120                        |
-| `lifeTime`                   | The life time of the petals (0 is infinity).                                                                                                       | Integer | 0                          |
+| `lifeTime`                   | The maximum life time of the petals in ms (0 disables the limit; animation completion still removes petals).                                       | Integer | 0                          |
+| `position`                   | Petal positioning: 'auto' uses 'fixed' for the body and 'absolute' for other containers. May also be set explicitly.                               | String  | 'auto'                     |
+| `hideScrollbars`             | Hide horizontal scrollbars on the target. Set to false to preserve existing overflow styles, for example with sticky elements.                     | Boolean | true                       |
+
+##### Preserving page layout
+
+When adding petals to the body, they stay in the viewport while the page scrolls and do not extend the document height. Other containers retain absolute positioning. To keep the target's overflow styles unchanged:
+
+```js
+var sakura = new Sakura('body', {
+    hideScrollbars: false,
+});
+```
 
 ##### Adding multiple colors
 You can add multiple colors like the example below. Colors are randomly picked.
@@ -111,6 +123,14 @@ $ yarn install
 ```
 
 ##### Tasks
+
+Run the regression tests against the source and distribution files:
+
+```bash
+$ npm test
+$ node scripts/test.js dist/sakura.js
+$ node scripts/test.js dist/sakura.min.js
+```
 
 You can run the watch task if you're actively developing. This watches for file changes and builds the correct files. This command also runs eslint.
 

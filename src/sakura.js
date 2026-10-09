@@ -20,7 +20,9 @@ const Sakura = function(selector, options) {
         gradientColorDegree: 120, // Gradient degree angle.
       },
     ],
-    lifeTime: 0, // Lifetime of the petal.
+    lifeTime: 0, // Maximum lifetime of the petal in milliseconds (0 disables the limit).
+    position: 'auto', // Fixed for the body, absolute for other containers.
+    hideScrollbars: true, // Hide horizontal scrollbars on the target element.
   };
 
   // Merge defaults with user options.
@@ -37,31 +39,23 @@ const Sakura = function(selector, options) {
 
   this.settings = extend(defaults, options);
 
-  // Dictionary for remove the petals by timestamp + lifetime
-  this.petalsWeak = new Map();
+  // Track active petals and their optional lifetime timers.
+  this.petals = new Map();
+  this.removePetal = petal => {
+    clearTimeout(this.petals.get(petal));
+    this.petals.delete(petal);
+    petal.remove();
+  };
 
-  // Every sec check petals for remove (by lifeTime)
-  setInterval(() => {
-    if (!this.settings.lifeTime)
-      return;
+  let petalPosition = this.settings.position;
+  if (petalPosition === 'auto') {
+    petalPosition = this.el === document.body ? 'fixed' : 'absolute';
+  }
 
-    const keysForRemove = [];
-    const stamp = Date.now();
-
-    for (const [key, value] of this.petalsWeak) {
-      if (key + this.settings.lifeTime < stamp) {
-        keysForRemove.push(key);
-        value.remove();
-      }
-    }
-
-    for (const key of keysForRemove) {
-      this.petalsWeak.delete(key);
-    }
-  }, 1000);
-
-  // Hide horizontal scrollbars on the target element.
-  this.el.style.overflowX = 'hidden';
+  // Allow pages with sticky elements to preserve their overflow styles.
+  if (this.settings.hideScrollbars) {
+    this.el.style.overflowX = 'hidden';
+  }
 
   // Random array element
   function randomArrayElem(arr) {
@@ -92,20 +86,24 @@ const Sakura = function(selector, options) {
     const rect = el.getBoundingClientRect();
 
     return (
-      rect.top >= 0 &&
-      rect.left >= 0 &&
-      rect.bottom <=
-        (window.innerHeight || document.documentElement.clientHeight) &&
-      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+      rect.bottom > 0 &&
+      rect.right > 0 &&
+      rect.top < (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.left < (window.innerWidth || document.documentElement.clientWidth)
     );
   }
 
   this.createPetal = () => {
-    if (this.el.dataset.sakuraAnimId) {
-      setTimeout(() => {
-        window.requestAnimationFrame(this.createPetal);
-      }, this.settings.delay);
+    if (!this.el.dataset.sakuraAnimId) {
+      return;
     }
+
+    this.createTimer = setTimeout(() => {
+      this.el.setAttribute(
+        'data-sakura-anim-id',
+        window.requestAnimationFrame(this.createPetal),
+      );
+    }, this.settings.delay);
 
     // Name the animations. These have to match the animations in the CSS file.
     const animationNames = {
@@ -138,7 +136,7 @@ const Sakura = function(selector, options) {
 
     // Create animations
     const animationsArr = [
-      `fall ${fallTime}s linear 0s 1`,
+      `fall ${fallTime}s linear 0s 1 forwards`,
       `${blowAnimation} ${(fallTime > 30 ? fallTime : 30) -
         20 +
         randomInt(0, 20)}s linear 0s infinite`,
@@ -155,6 +153,7 @@ const Sakura = function(selector, options) {
     // Get a random color.
     const color = randomArrayElem(this.settings.colors);
 
+    petal.style.position = petalPosition;
     petal.style.background = `linear-gradient(${color.gradientColorDegree}deg, ${color.gradientColorStart}, ${color.gradientColorEnd})`;
     petal.style.webkitAnimation = animations;
     petal.style.animation = animations;
@@ -168,22 +167,24 @@ const Sakura = function(selector, options) {
     petal.style.marginTop = `${-(Math.floor(Math.random() * 20) + 15)}px`;
     petal.style.width = `${width}px`;
 
-    // Remove petals of which the animation ended.
-    PrefixedEvent(petal, 'AnimationEnd', () => {
-      if (!elementInViewport(petal)) {
-        petal.remove();
+    // Always remove petals when their fall animation ends.
+    PrefixedEvent(petal, 'AnimationEnd', event => {
+      if (event.animationName === 'fall') {
+        this.removePetal(petal);
       }
     });
 
     // Remove petals that float out of the viewport.
     PrefixedEvent(petal, 'AnimationIteration', () => {
       if (!elementInViewport(petal)) {
-        petal.remove();
+        this.removePetal(petal);
       }
     });
 
-    // Added petals in weakMap by stamp
-    this.petalsWeak.set(Date.now(), petal);
+    const lifeTimer = this.settings.lifeTime
+      ? setTimeout(() => this.removePetal(petal), this.settings.lifeTime)
+      : null;
+    this.petals.set(petal, lifeTimer);
 
     // Add the petal to the target element.
     this.el.appendChild(petal);
@@ -209,6 +210,7 @@ Sakura.prototype.start = function() {
 
 Sakura.prototype.stop = function(graceful = false) {
   const animId = this.el.dataset.sakuraAnimId;
+  clearTimeout(this.createTimer);
   if (animId) {
     window.cancelAnimationFrame(animId);
     this.el.setAttribute('data-sakura-anim-id', '');
@@ -218,11 +220,8 @@ Sakura.prototype.stop = function(graceful = false) {
   // You can also set 'graceful' to true to stop new petals from being created.
   // This way the petals won't be removed abruptly.
   if (!graceful) {
-    setTimeout(() => {
-      const petals = document.getElementsByClassName(this.settings.className);
-      while (petals.length > 0) {
-        petals[0].parentNode.removeChild(petals[0]);
-      }
-    }, this.settings.delay + 50);
+    this.petals.forEach((timer, petal) => {
+      this.removePetal(petal);
+    });
   }
 };

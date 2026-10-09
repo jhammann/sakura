@@ -3,37 +3,22 @@
  * Vanilla JS version of jQuery-Sakura: Make it rain sakura petals.
  * https://github.com/jhammann/sakura
  *
- * Copyright 2019-2022 Jeroen Hammann
+ * Copyright 2019-2026 Jeroen Hammann
  *
  * Released under the MIT License
  *
- * Released on: March 4, 2022
+ * Released on: October 9, 2026
  */
 "use strict";
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
-function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 var Sakura = function Sakura(selector, options) {
   var _this = this;
-
   if (typeof selector === 'undefined') {
     throw new Error('No selector present. Define an element.');
   }
+  this.el = document.querySelector(selector);
 
-  this.el = document.querySelector(selector); // Defaults for the option object, which gets extended below.
-
+  // Defaults for the option object, which gets extended below.
   var defaults = {
     className: 'sakura',
     // Classname of the petal. This corresponds with the css.
@@ -52,12 +37,15 @@ var Sakura = function Sakura(selector, options) {
       gradientColorEnd: 'rgba(255, 197, 208, 0.9)',
       // Gradient color end (rgba).
       gradientColorDegree: 120 // Gradient degree angle.
-
     }],
-    lifeTime: 0 // Lifetime of the petal.
+    lifeTime: 0,
+    // Maximum lifetime of the petal in milliseconds (0 disables the limit).
+    position: 'auto',
+    // Fixed for the body, absolute for other containers.
+    hideScrollbars: true // Hide horizontal scrollbars on the target element.
+  };
 
-  }; // Merge defaults with user options.
-
+  // Merge defaults with user options.
   var extend = function extend(originalObj, newObj) {
     Object.keys(originalObj).forEach(function (key) {
       if (newObj && Object.prototype.hasOwnProperty.call(newObj, key)) {
@@ -67,103 +55,84 @@ var Sakura = function Sakura(selector, options) {
     });
     return originalObj;
   };
+  this.settings = extend(defaults, options);
 
-  this.settings = extend(defaults, options); // Dictionary for remove the petals by timestamp + lifetime
+  // Track active petals and their optional lifetime timers.
+  this.petals = new Map();
+  this.removePetal = function (petal) {
+    clearTimeout(_this.petals.get(petal));
+    _this.petals.delete(petal);
+    petal.remove();
+  };
+  var petalPosition = this.settings.position;
+  if (petalPosition === 'auto') {
+    petalPosition = this.el === document.body ? 'fixed' : 'absolute';
+  }
 
-  this.petalsWeak = new Map(); // Every sec check petals for remove (by lifeTime)
+  // Allow pages with sticky elements to preserve their overflow styles.
+  if (this.settings.hideScrollbars) {
+    this.el.style.overflowX = 'hidden';
+  }
 
-  setInterval(function () {
-    if (!_this.settings.lifeTime) return;
-    var keysForRemove = [];
-    var stamp = Date.now();
-
-    var _iterator = _createForOfIteratorHelper(_this.petalsWeak),
-        _step;
-
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var _step$value = _slicedToArray(_step.value, 2),
-            _key = _step$value[0],
-            value = _step$value[1];
-
-        if (_key + _this.settings.lifeTime < stamp) {
-          keysForRemove.push(_key);
-          value.remove();
-        }
-      }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
-    }
-
-    for (var _i = 0, _keysForRemove = keysForRemove; _i < _keysForRemove.length; _i++) {
-      var key = _keysForRemove[_i];
-
-      _this.petalsWeak.delete(key);
-    }
-  }, 1000); // Hide horizontal scrollbars on the target element.
-
-  this.el.style.overflowX = 'hidden'; // Random array element
-
+  // Random array element
   function randomArrayElem(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
-  } // Random integer
+  }
 
-
+  // Random integer
   function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
-  } // Check for animation events.
+  }
 
-
+  // Check for animation events.
   var prefixes = ['webkit', 'moz', 'MS', 'o', ''];
-
   function PrefixedEvent(element, type, callback) {
     for (var p = 0; p < prefixes.length; p += 1) {
       var animType = type;
-
       if (!prefixes[p]) {
         animType = type.toLowerCase();
       }
-
       element.addEventListener(prefixes[p] + animType, callback, false);
     }
-  } // Check if the element is in the viewport.
-
-
-  function elementInViewport(el) {
-    var rect = el.getBoundingClientRect();
-    return rect.top >= 0 && rect.left >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && rect.right <= (window.innerWidth || document.documentElement.clientWidth);
   }
 
+  // Check if the element is in the viewport.
+  function elementInViewport(el) {
+    var rect = el.getBoundingClientRect();
+    return rect.bottom > 0 && rect.right > 0 && rect.top < (window.innerHeight || document.documentElement.clientHeight) && rect.left < (window.innerWidth || document.documentElement.clientWidth);
+  }
   this.createPetal = function () {
-    if (_this.el.dataset.sakuraAnimId) {
-      setTimeout(function () {
-        window.requestAnimationFrame(_this.createPetal);
-      }, _this.settings.delay);
-    } // Name the animations. These have to match the animations in the CSS file.
+    if (!_this.el.dataset.sakuraAnimId) {
+      return;
+    }
+    _this.createTimer = setTimeout(function () {
+      _this.el.setAttribute('data-sakura-anim-id', window.requestAnimationFrame(_this.createPetal));
+    }, _this.settings.delay);
 
-
+    // Name the animations. These have to match the animations in the CSS file.
     var animationNames = {
       blowAnimations: ['blow-soft-left', 'blow-medium-left', 'blow-soft-right', 'blow-medium-right'],
       swayAnimations: ['sway-0', 'sway-1', 'sway-2', 'sway-3', 'sway-4', 'sway-5', 'sway-6', 'sway-7', 'sway-8']
-    }; // Get one random animation of each type and randomize fall time of the petals
+    };
 
+    // Get one random animation of each type and randomize fall time of the petals
     var blowAnimation = randomArrayElem(animationNames.blowAnimations);
     var swayAnimation = randomArrayElem(animationNames.swayAnimations);
+    var fallTime = (document.documentElement.clientHeight * 0.007 + Math.round(Math.random() * 5)) * _this.settings.fallSpeed;
 
-    var fallTime = (document.documentElement.clientHeight * 0.007 + Math.round(Math.random() * 5)) * _this.settings.fallSpeed; // Create animations
+    // Create animations
+    var animationsArr = ["fall ".concat(fallTime, "s linear 0s 1 forwards"), "".concat(blowAnimation, " ").concat((fallTime > 30 ? fallTime : 30) - 20 + randomInt(0, 20), "s linear 0s infinite"), "".concat(swayAnimation, " ").concat(randomInt(2, 4), "s linear 0s infinite")];
+    var animations = animationsArr.join(', ');
 
-
-    var animationsArr = ["fall ".concat(fallTime, "s linear 0s 1"), "".concat(blowAnimation, " ").concat((fallTime > 30 ? fallTime : 30) - 20 + randomInt(0, 20), "s linear 0s infinite"), "".concat(swayAnimation, " ").concat(randomInt(2, 4), "s linear 0s infinite")];
-    var animations = animationsArr.join(', '); // Create petal and give it a random size.
-
+    // Create petal and give it a random size.
     var petal = document.createElement('div');
     petal.classList.add(_this.settings.className);
     var height = randomInt(_this.settings.minSize, _this.settings.maxSize);
-    var width = height - Math.floor(randomInt(0, _this.settings.minSize) / 3); // Get a random color.
+    var width = height - Math.floor(randomInt(0, _this.settings.minSize) / 3);
 
+    // Get a random color.
     var color = randomArrayElem(_this.settings.colors);
+    petal.style.position = petalPosition;
     petal.style.background = "linear-gradient(".concat(color.gradientColorDegree, "deg, ").concat(color.gradientColorStart, ", ").concat(color.gradientColorEnd, ")");
     petal.style.webkitAnimation = animations;
     petal.style.animation = animations;
@@ -171,60 +140,55 @@ var Sakura = function Sakura(selector, options) {
     petal.style.height = "".concat(height, "px");
     petal.style.left = "".concat(Math.random() * document.documentElement.clientWidth - 100, "px");
     petal.style.marginTop = "".concat(-(Math.floor(Math.random() * 20) + 15), "px");
-    petal.style.width = "".concat(width, "px"); // Remove petals of which the animation ended.
+    petal.style.width = "".concat(width, "px");
 
-    PrefixedEvent(petal, 'AnimationEnd', function () {
-      if (!elementInViewport(petal)) {
-        petal.remove();
+    // Always remove petals when their fall animation ends.
+    PrefixedEvent(petal, 'AnimationEnd', function (event) {
+      if (event.animationName === 'fall') {
+        _this.removePetal(petal);
       }
-    }); // Remove petals that float out of the viewport.
+    });
 
+    // Remove petals that float out of the viewport.
     PrefixedEvent(petal, 'AnimationIteration', function () {
       if (!elementInViewport(petal)) {
-        petal.remove();
+        _this.removePetal(petal);
       }
-    }); // Added petals in weakMap by stamp
+    });
+    var lifeTimer = _this.settings.lifeTime ? setTimeout(function () {
+      return _this.removePetal(petal);
+    }, _this.settings.lifeTime) : null;
+    _this.petals.set(petal, lifeTimer);
 
-    _this.petalsWeak.set(Date.now(), petal); // Add the petal to the target element.
-
-
+    // Add the petal to the target element.
     _this.el.appendChild(petal);
   };
-
   this.el.setAttribute('data-sakura-anim-id', window.requestAnimationFrame(this.createPetal));
 };
-
 Sakura.prototype.start = function () {
   var animId = this.el.dataset.sakuraAnimId;
-
   if (!animId) {
     this.el.setAttribute('data-sakura-anim-id', window.requestAnimationFrame(this.createPetal));
   } else {
     throw new Error('Sakura is already running.');
   }
 };
-
 Sakura.prototype.stop = function () {
   var _this2 = this;
-
   var graceful = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
   var animId = this.el.dataset.sakuraAnimId;
-
+  clearTimeout(this.createTimer);
   if (animId) {
     window.cancelAnimationFrame(animId);
     this.el.setAttribute('data-sakura-anim-id', '');
-  } // Remove all current blossoms at once.
+  }
+
+  // Remove all current blossoms at once.
   // You can also set 'graceful' to true to stop new petals from being created.
   // This way the petals won't be removed abruptly.
-
-
   if (!graceful) {
-    setTimeout(function () {
-      var petals = document.getElementsByClassName(_this2.settings.className);
-
-      while (petals.length > 0) {
-        petals[0].parentNode.removeChild(petals[0]);
-      }
-    }, this.settings.delay + 50);
+    this.petals.forEach(function (timer, petal) {
+      _this2.removePetal(petal);
+    });
   }
 };

@@ -6,6 +6,9 @@
   "homepage": "https://github.com/jhammann/sakura",
   "author": "Jeroen Hammann",
   "license": "MIT",
+  "scripts": {
+    "test": "node scripts/test.js"
+  },
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
