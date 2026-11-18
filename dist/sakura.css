@@ -1,5 +1,5 @@
 /*!
- * Sakura.js 1.1.1
+ * Sakura.js 1.2.0
  * Vanilla JS version of jQuery-Sakura: Make it rain sakura petals.
  * https://github.com/jhammann/sakura
  *
